@@ -1,0 +1,269 @@
+// variable
+$primary-color: #945cf9;
+$primary-hover: #8e57f5;
+$secondary-color: #f5f5f5;
+$secondary-hover: #eeeeee;
+$text-color: #333;
+$light-text: #555;
+$border-color: #ddd;
+$light-border: #eaeaea;
+$background-color: #fff;
+$hover-background: #f5f5f5;
+$scrollbar-thumb: #bbbbbb;
+$scrollbar-thumb-hover: #949494;
+
+// mixin
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin focus-outline {
+  outline: none;
+  border-color: $primary-color;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+
+// scrollbar
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: $background-color;
+}
+
+::-webkit-scrollbar-thumb {
+  background: $scrollbar-thumb;
+  border-radius: 5px;
+  
+  &:hover {
+    background: $scrollbar-thumb-hover;
+  }
+}
+
+// button
+button {
+  background-color: $background-color;
+  padding: 4px 6px;
+  border-radius: 8px;
+  border: 1px solid $border-color;
+  cursor: pointer;
+  font-size: 14px;
+  
+  &:hover {
+    background-color: $hover-background;
+  }
+  
+  &.primary-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: $primary-color;
+    color: white;
+    border: none;
+    font-weight: bold;
+    
+    &:hover {
+      background: $primary-hover;
+    }
+  }
+  &.secondary-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: $secondary-color;
+    border-color: $light-border;
+    color: $light-text;
+
+    &:hover {
+      background-color: $secondary-hover;
+    }
+    font-weight: bold;
+  }
+}
+
+// select
+.select-box {
+  position: relative;
+  
+  &::after {
+    content: "▼";
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 12px;
+    color: rgb(119, 119, 119);
+  }
+}
+
+select {
+  width: auto;
+  padding: 4px 20px 4px 8px;
+  font-size: 14px;
+  text-align: center;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+  border: 1px solid $border-color;
+  border-radius: 4px;
+  background-color: $background-color;
+  cursor: pointer;
+  appearance: none;
+  
+  &:focus {
+    outline: none;
+  }
+}
+
+// form
+.form-group {
+  padding: 10px 16px;
+  
+  label {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 6px;
+    padding-left: 4px;
+    font-weight: 500;
+    color: $light-text;
+  }
+}
+
+.form-group-inline {
+  @include flex-between;
+  border-bottom: 1px solid $light-border;
+  
+  &:last-child {
+    border-bottom: none;
+  }
+  
+  label {
+    padding-left: 0;
+    margin-bottom: 0;
+    font-weight: bold;
+  }
+}
+
+// input
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 12px 8px;
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  box-sizing: border-box;
+  font-size: 14px;
+  background-color: $background-color;
+  color: $text-color;
+  
+  &:focus {
+    @include focus-outline;
+  }
+}
+
+// switch
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+  margin: 2px 0;
+  border-radius: 20px;
+  
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    
+    &:checked + .slider {
+      background-color: $primary-color;
+      
+      &::before {
+        transform: translateX(18px);
+      }
+    }
+  }
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 20px;
+  transition: 0.3s;
+  
+  &::before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+}
+
+html.dark{
+  ::-webkit-scrollbar-track {
+    background: #333;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #555;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #777;
+  }
+  button {
+    background-color: #333;
+    border-color: #555;
+    color: #fff;
+    &.primary-btn {
+      background-color: #945cf9;
+      &:hover {
+        background: #8e57f5;
+      }
+    }
+  }
+  select {
+    background-color: #333;
+    color: #fff;
+  }
+  .form-group {
+    background-color: #333;
+    color: #fff;
+  }
+  input[type="text"],
+  input[type="password"] {
+    background-color: #333;
+    color: #fff;
+  }
+  .switch {
+    background-color: #555;
+  }
+  .slider::before {
+    background-color: #333;
+  }
+  input[type="text"]:focus,
+  input[type="password"]:focus {
+    @include focus-outline;
+  }
+
+  .form-group {
+    background-color: #333;
+    color: #fff;
+  }
+  .form-group label {
+    color: #ccc;
+  }
+  .form-group-inline {
+    border-bottom: 1px solid #555;
+  }
+} 

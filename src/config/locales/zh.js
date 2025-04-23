@@ -1,0 +1,58 @@
+import NoApiKey from '../../components/NoApikey'
+
+export default {
+  common: {
+    save: '保存设置',
+    success: '成功',
+    error: '错误',
+    settingsSaved: '设置已保存',
+    settingsLoadFailed: '设置加载失败，请重试',
+    saveFailed: '保存失败',
+    settings: '设置',
+  },
+  settings: {
+    theme: '主题',
+    language: '语言',
+    floatButton: '悬浮按钮',
+    followSystem: '跟随系统',
+    light: '浅色',
+    dark: '深色',
+    english: 'English',
+    chinese: '中文-简体',
+  },
+  ai: {
+    model: 'AI模型',
+    serviceProvider: '服务提供商',
+    modelName: '模型',
+    apiHost: 'API地址',
+    apiKey: 'API密钥',
+    enterApiKey: '输入API密钥',
+    qwen: '通义千问',
+  },
+  welcome: {
+    title: '你好！',
+    subtitle: '欢迎使用 Easy Browser',
+    noApiKey: '请先设置大模型API密钥',
+  },
+  chat: {
+    inputPlaceholder: '输入您的任务...',
+  },
+  tool: {
+    create_tab: `打开新标签页`,
+    get_current_tab: `获取当前标签页信息`,
+    get_all_tabs: `获取所有标签页信息`,
+    close_tabs: `关闭标签页`,
+    reload_tab: `刷新标签页`,
+    update_tab: `更新标签页`,
+    type_text: `输入文本`,
+    click_element: '模拟点击',
+    get_screen_structure: '识别页面结构',
+    get_screen_content: '分析页面内容',
+    scroll_screen: '滚动屏幕',
+    get_screen_shot: '获取屏幕截图',
+    reload_current_tab: '重新加载当前标签页',
+    delay: `等待`,
+    toolConfirm: '确认完成',
+    toolCancel: '取消任务',
+  },
+}
