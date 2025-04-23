@@ -6,7 +6,7 @@
 
 <p align="center">
   <a href="https://github.com/zhujunxi/easy-browser">
-    <img src="https://img.shields.io/badge/version-0.1.1-blue.svg" alt="Version" />
+    <img src="https://img.shields.io/github/package-json/v/zhujunxi/easy-browser?color=blue" alt="Version" />
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/badge/license-Apache%202.0-green.svg" alt="License" />
@@ -14,6 +14,8 @@
 </p>
 
 <h2 align="center">Web automation assistant extension based on LLMs.</h2>
+
+![Demo](demo/demo_1.png)
 
 ## 📖 Introduction
 
