@@ -17,7 +17,9 @@ export default function extension(defineManifest) {
 
       if (fs.existsSync(assetsPath)) {
         const cssFiles = fs.readdirSync(assetsPath)
-        const contentStyleFile = cssFiles.find(file => file.startsWith('contentStyle.') && file.endsWith('.css'))
+        const contentStyleFile = cssFiles.find(
+          (file) => file.startsWith('contentStyle.') && file.endsWith('.css'),
+        )
 
         if (contentStyleFile) {
           styleFile = `assets/css/${contentStyleFile}`
@@ -27,18 +29,15 @@ export default function extension(defineManifest) {
       // instead of content_style.css
       const updatedManifest = {
         ...defineManifest,
-        content_scripts: defineManifest.content_scripts.map(script => ({
+        content_scripts: defineManifest.content_scripts.map((script) => ({
           ...script,
-          css: [styleFile]
-        }))
-      };
+          css: [styleFile],
+        })),
+      }
 
-      fs.writeFileSync(
-        manifestPath,
-        JSON.stringify(updatedManifest, null, 2)
-      );
+      fs.writeFileSync(manifestPath, JSON.stringify(updatedManifest, null, 2))
 
       console.log(`\nManifest file copy complete: ${manifestPath}`)
     },
-  };
+  }
 }

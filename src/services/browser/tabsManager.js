@@ -10,7 +10,7 @@ const tabs_manager = {
     // Validate URL format
     try {
       new URL(url)
-    } catch (error) {
+    } catch {
       throw new Error('Invalid URL format')
     }
 
@@ -18,7 +18,7 @@ const tabs_manager = {
       const tab = await chrome.tabs.create({ url })
 
       return new Promise((resolve, reject) => {
-        const listener = (tabId, changeInfo, updatedTab) => {
+        const listener = (tabId, changeInfo) => {
           if (tabId === tab.id && changeInfo.status === 'complete') {
             chrome.tabs.onUpdated.removeListener(listener)
             resolve(`The tab[${tab.id}] of ${url} has been opened and loaded successfully.`)
@@ -27,7 +27,6 @@ const tabs_manager = {
 
         chrome.tabs.onUpdated.addListener(listener)
 
-        // Set timeout handler
         setTimeout(() => {
           chrome.tabs.onUpdated.removeListener(listener)
           reject(new Error('Tab opening timeout, please check your network'))

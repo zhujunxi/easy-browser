@@ -27,7 +27,7 @@ const SidePanelPage = () => {
       const config = await ConfigManager.get(['aiModel', 'openaiKey', 'qwenKey', 'deepseekKey'])
       const currentModel = config.aiModel || 'openai'
       const currentKey = config[`${currentModel}Key`]
-      setNoApiKey(!!currentKey)
+      setNoApiKey(!currentKey)
     } catch (error) {
       console.error('Failed to check API key:', error)
       setNoApiKey(true)
@@ -37,7 +37,7 @@ const SidePanelPage = () => {
   const checkLanguage = async () => {
     try {
       const config = await ConfigManager.get(['language'])
-      const currentLanguage = config.language || 'en'
+      const currentLanguage = config.language || 'English'
       i18n.setLanguage(currentLanguage)
     } catch (error) {
       console.error('Failed to check language:', error)

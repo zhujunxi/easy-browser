@@ -26,7 +26,6 @@ export const useTheme = () => {
   }
   // Initialize theme
   useEffect(() => {
-    // Monitor system theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
     const handleThemeChange = async () => {
       const config = await ConfigManager.get('theme')
@@ -38,6 +37,11 @@ export const useTheme = () => {
     mediaQuery.addEventListener('change', handleThemeChange)
 
     loadTheme()
+
+    return () => {
+      mediaQuery.removeEventListener('change', handleThemeChange)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return { setTheme, loadTheme }

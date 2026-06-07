@@ -13,7 +13,6 @@ import { useI18n } from '@hooks/useI18n'
 import SelectBox from '@components/SelectBox'
 import ToggleSwitch from '@components/ToggleSwitch'
 import ModelCard from './ModelCard'
-import FloatButton from '../content/components/FloatButton.js'
 
 const OptionsPage = () => {
   const { notification, showNotification } = useNotification()
@@ -45,7 +44,7 @@ const OptionsPage = () => {
           ...prevSettings,
           ...config,
         }))
-      } catch (error) {
+      } catch {
         showNotification(t('common.settingsLoadFailed'), 'error')
       }
     }

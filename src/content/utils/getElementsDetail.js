@@ -7,14 +7,15 @@ const getElementsDetail = (el) => {
   }
 
   switch (el.tagName) {
-    case 'A':
+    case 'A': {
       const linkText = el.innerText
       return {
         ...baseData,
         ...(linkText && { text: el.innerText }),
         ...(!linkText && { href: el.href.slice(0, 20) }),
       }
-    case 'BUTTON':
+    }
+    case 'BUTTON': {
       let buttonText = ''
       const buttonAriaLabel = el.getAttribute('aria-label')
       if (buttonAriaLabel) {
@@ -27,6 +28,7 @@ const getElementsDetail = (el) => {
         ...(buttonText && { text: buttonText }),
         ...(!buttonText && { class: el.className.slice(0, 20) }),
       }
+    }
     case 'INPUT':
       return {
         ...baseData,
@@ -89,7 +91,7 @@ const getElementsDetail = (el) => {
         text: el.innerText,
       }
 
-    default:
+    default: {
       const role = el.getAttribute('role')
       if (role) {
         return {
@@ -100,6 +102,7 @@ const getElementsDetail = (el) => {
         }
       }
       return baseData
+    }
   }
 }
 

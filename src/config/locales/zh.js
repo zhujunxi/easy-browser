@@ -52,7 +52,7 @@ export default {
     get_screen_shot: '获取屏幕截图',
     reload_current_tab: '重新加载当前标签页',
     delay: `等待`,
-    toolConfirm: '确认完成',
-    toolCancel: '取消任务',
+    tool_confirm: '确认完成',
+    tool_cancel: '取消任务',
   },
 }

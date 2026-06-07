@@ -48,7 +48,7 @@ const TaskExample = ({ onTaskClick }) => {
         '明天北京飞上海的航班，白天抵达而且价格最低的是哪一班？',
       ])
     }
-  }, [])
+  }, [currentLanguage])
   return (
     <div className='task-example'>
       {task.map((task, index) => {

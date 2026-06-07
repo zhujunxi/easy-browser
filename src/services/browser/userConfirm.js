@@ -6,7 +6,7 @@ let resolveCallback = null
 let rejectCallback = null
 
 const userConfirm = {
-  call: async ({ reason }) => {
+  call: async () => {
     return new Promise((resolve, reject) => {
       resolveCallback = resolve
       rejectCallback = reject

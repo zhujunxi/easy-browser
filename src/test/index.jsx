@@ -67,12 +67,7 @@ const TestPage = () => {
     setImgSrc(res.screenshotUrl)
   }
 
-  const generatePDF = async () => {
-    const res = await Calls.generataPDF({ prompt: xpathValue })
-    setResults(res)
-  }
-
-  const wait = async () => {
+  const _wait = async () => {
     const res = await Calls.delay({ seconds: 5 })
     setResults(res)
   }
@@ -117,7 +112,6 @@ const TestPage = () => {
       >
         <button onClick={scrollScreen}>scrollScreen</button>
         <button onClick={getScreenShot}>getScreenShot</button>
-        {/* <button onClick={generatePDF}>generatePDF</button> */}
       </div>
       <div>{JSON.stringify(resulets)}</div>
       {imgSrc && <img src={imgSrc} style={{ width: '100%' }} alt='预览图片' />}

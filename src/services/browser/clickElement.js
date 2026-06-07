@@ -19,22 +19,26 @@ const clickElement = {
       const originalUrl = tabs[0].url
 
       const waitForUrlChange = (tabId, originalUrl, timeout = 1000) => {
-        return new Promise((resolve) => {
+        const urlChangePromise = new Promise((resolve) => {
           const listener = (updatedTabId, changeInfo) => {
             if (updatedTabId === tabId && changeInfo.url && changeInfo.url !== originalUrl) {
               chrome.tabs.onUpdated.removeListener(listener)
+              clearTimeout(timeoutId)
               resolve(true)
             }
           }
 
           chrome.tabs.onUpdated.addListener(listener)
 
-          setTimeout(() => {
+          const timeoutId = setTimeout(() => {
             chrome.tabs.onUpdated.removeListener(listener)
             resolve(false)
           }, timeout)
         })
+        return urlChangePromise
       }
+
+      const urlChangePromise = waitForUrlChange(tabId, originalUrl)
 
       await chrome.scripting.executeScript({
         target: { tabId },
@@ -66,7 +70,7 @@ const clickElement = {
         args: [xpath],
       })
 
-      const didNavigate = await waitForUrlChange(tabId, originalUrl)
+      const didNavigate = await urlChangePromise
 
       return `The element has been clicked successfully. ${didNavigate ? 'The page has been redirected' : ''}`
     } catch (error) {

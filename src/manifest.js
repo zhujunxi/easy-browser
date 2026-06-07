@@ -1,4 +1,4 @@
-import packageData from '../package.json' assert { type: 'json' }
+import packageData from '../package.json' with { type: 'json' }
 
 export default {
   manifest_version: 3,

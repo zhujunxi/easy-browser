@@ -2,6 +2,7 @@ import tabsManager from './tabsManager.js'
 import scrollScreen from './scrollScreen.js'
 import getScreenStructure from './getScreenStructure.js'
 import getScreenContent from './getScreenContent.js'
+import getScreenShot from './getScreenShot.js'
 import typeText from './typeText.js'
 import clickElement from './clickElement.js'
 import hoverElement from './hoverElement.js'
@@ -18,6 +19,7 @@ const Calls = {
   scrollScreen: scrollScreen.call,
   getScreenStructure: getScreenStructure.call,
   getScreenContent: getScreenContent.call,
+  getScreenShot: getScreenShot.call,
   typeText: typeText.call,
   clickElement: clickElement.call,
   hoverElement: hoverElement.call,
@@ -35,6 +37,7 @@ const Tools = [
   scrollScreen.tool,
   getScreenStructure.tool,
   getScreenContent.tool,
+  getScreenShot.tool,
   typeText.tool,
   clickElement.tool,
   hoverElement.tool,

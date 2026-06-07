@@ -1,7 +1,7 @@
 function arrayToHtmlString(arr) {
   return arr
     .map((item, index) => {
-      const { xpath, ...rest } = item
+      const { xpath: _xpath, ...rest } = item
 
       let html = `${index}: <${rest.tag.toLowerCase()}`
 
@@ -13,7 +13,7 @@ function arrayToHtmlString(arr) {
 
       html += '>'
 
-      if (rest.text) {
+      if (rest.text && typeof rest.text === 'string') {
         html += rest.text.replace(/\n/g, ' ').trim().slice(0, 20)
       }
 

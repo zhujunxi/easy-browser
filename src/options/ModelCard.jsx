@@ -1,5 +1,5 @@
 // ModelCard Component
-const ModelCard = ({ id, title, active, settings, onChange, fields }) => {
+const ModelCard = ({ id, active, settings, onChange, fields }) => {
   return (
     <div className={`model-card ${active ? 'active' : ''}`} id={`${id}-card`}>
       {fields.map((field) => (

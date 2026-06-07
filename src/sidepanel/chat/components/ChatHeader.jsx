@@ -1,5 +1,4 @@
 import settingsIcon from '@assets/icon/settings.svg'
-import newChatIcon from '@assets/icon/new-chat.svg'
 
 const ChatHeader = () => {
   const handleSettingsClick = () => {

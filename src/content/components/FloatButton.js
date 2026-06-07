@@ -17,7 +17,7 @@ class FloatButton {
       }
 
       this._listenForStorageChanges()
-    } catch (error) {
+    } catch {
       this.hide()
     }
   }
@@ -54,7 +54,7 @@ class FloatButton {
   }
 
   _listenForStorageChanges() {
-    chrome.storage.onChanged.addListener((changes, namespace) => {
+    chrome.storage.onChanged.addListener((changes) => {
       if (changes.floatBtn) {
         if (changes.floatBtn.newValue === false) {
           this.hide()
@@ -67,7 +67,7 @@ class FloatButton {
 
   _getStorageData(key) {
     return new Promise((resolve, reject) => {
-      chrome.storage.sync.get([key], (result) => {
+      chrome.storage.local.get([key], (result) => {
         if (chrome.runtime.lastError) {
           reject(chrome.runtime.lastError)
         } else {

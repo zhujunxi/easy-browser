@@ -30,7 +30,7 @@ class ConfigManager {
   static async get(keys) {
     try {
       return new Promise((resolve) => {
-        chrome.storage.sync.get(keys, (result) => {
+        chrome.storage.local.get(keys, (result) => {
           const finalResult = { ...result }
 
           // Fill in default values
@@ -62,7 +62,7 @@ class ConfigManager {
   static async set(items) {
     try {
       return new Promise((resolve, reject) => {
-        chrome.storage.sync.set(items, () => {
+        chrome.storage.local.set(items, () => {
           if (chrome.runtime.lastError) {
             reject(new Error(chrome.runtime.lastError.message))
           } else {
@@ -83,7 +83,7 @@ class ConfigManager {
   static async remove(keys) {
     try {
       return new Promise((resolve, reject) => {
-        chrome.storage.sync.remove(keys, () => {
+        chrome.storage.local.remove(keys, () => {
           if (chrome.runtime.lastError) {
             reject(new Error(chrome.runtime.lastError.message))
           } else {

@@ -4,25 +4,17 @@ const openSidePanel = async (windowId) => {
   if (!chrome.sidePanel || !chrome.sidePanel.setOptions) {
     throw new Error('Side panel API not available')
   }
-  try {
-    await chrome.sidePanel.open({ windowId })
-    return true
-  } catch (e) {
-    throw e
-  }
+  await chrome.sidePanel.open({ windowId })
+  return true
 }
 
 const closeSidePanel = async () => {
   if (!chrome.sidePanel || !chrome.sidePanel.setOptions) {
     throw new Error('Side panel API not available')
   }
-  try {
-    await chrome.sidePanel.setOptions({ enabled: false })
-    await chrome.sidePanel.setOptions({ enabled: true })
-    return true
-  } catch (e) {
-    throw e
-  }
+  await chrome.sidePanel.setOptions({ enabled: false })
+  await chrome.sidePanel.setOptions({ enabled: true })
+  return true
 }
 
 export const toggleSidePanelHandler = async (sender, sendResponse) => {

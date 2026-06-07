@@ -2,8 +2,6 @@
  * Get page screen shot Function and Tool Definition
  */
 
-import { trimHtml } from '@utils/trim_html.js'
-
 const getScreenShot = {
   call: async () => {
     try {
@@ -38,13 +36,7 @@ const getScreenShot = {
         'Get a screenshot of the current screen visible area to identify complex page structures',
       parameters: {
         type: 'object',
-        properties: {
-          screenIndex: {
-            type: 'integer',
-            description: 'Screen page number, default is 1',
-          },
-        },
-        required: ['screenIndex'],
+        properties: {},
       },
     },
   },

@@ -1,6 +1,5 @@
 import scanPageEffect from './utils/scanPageEffect.js'
-import markElements from './utils/markElements.js'
-import getInteractiveElements from './utils/getInteractiveElements'
+import getInteractiveElements from './utils/getInteractiveElements.js'
 import getElementsDetail from './utils/getElementsDetail.js'
 import getVisibleTextInViewport from './utils/getVisibleTextInViewport.js'
 import FloatButton from './components/FloatButton.js'
@@ -12,9 +11,11 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     scanPageEffect()
     // markElements(elements)
     sendResponse(response)
+    return true
   } else if (request.action === 'GET_SCREEN_CONTENT') {
     const response = await getVisibleTextInViewport(document)
     scanPageEffect()
     sendResponse(response)
+    return true
   }
 })
