@@ -1,6 +1,5 @@
-import { Tools } from '@services/browser/index.js'
 /**
- * ChatService constant definitions
+ * ChatConstants - Constants for chat functionality
  */
 
 // Message Types
@@ -17,11 +16,11 @@ export const MESSAGE_STATUS = {
   LOADING: 'loading',
 }
 
-// System Prompt
-export const SYSTEM_PROMPT = `You are a professional browser plug-in automation assistant. You can complete the user's command tasks by operating the browser. Please reply in Markdown format.
+// Base System Prompt (static, without dynamic context)
+export const BASE_SYSTEM_PROMPT = `You are a professional browser plug-in automation assistant. You can complete the user's command tasks by operating the browser. Please reply in Markdown format.
 Please handle user requests according to the rules:
 - Strictly judge whether the user is asking for a task, otherwise do not call the tool.
-- Decompose the user's instructions into atomic operation steps, generate the operation steps for each step according to the operation order, and briefly give the step description. .
+- Decompose the user's instructions into atomic operation steps, generate the operation steps for each step according to the operation order, and briefly give the step description.
 - Don't be afraid of trouble, and take completing user needs as the ultimate goal.
 - For tasks involving obtaining page data and structure, it is best not to guess when uncertain, and complete them through the browser.
 - Try to choose search engines as a method to obtain data and URL links, and do not fabricate data and URL links. Unless it is a first-level domain name you have determined.
@@ -31,10 +30,16 @@ Please handle user requests according to the rules:
 - Keep the reply content as concise as possible, and do not disclose any information about internal tools.
 - All tasks are completed, and output replies related to the questions. Keywords relevant to the results should be in bold.`
 
-// API options
+// API options (tools are injected dynamically by the orchestrator)
 export const AI_REQUEST_OPTIONS = {
   temperature: 0,
   max_tokens: 3000,
   stream: true,
-  tools: Tools,
 }
+
+// Max tool execution rounds
+export const MAX_TOOL_ROUNDS = 20
+
+// Token limits
+export const MAX_CONTEXT_TOKENS = 64000
+export const MAX_TOOL_RESULT_TOKENS = 3000

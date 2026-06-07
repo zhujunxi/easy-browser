@@ -1,13 +1,9 @@
-/**
- * Type Text Function and Tool Definition
- */
-import pageDataStore from './Store/index.js'
+import pageDataStore from '../store/page-data.js'
 
 const typeText = {
   call: async ({ tagIndex, text }) => {
     try {
       const numericIndex = Number(tagIndex)
-
       const xpath = pageDataStore.getItem(numericIndex).xpath
 
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true })
@@ -89,7 +85,7 @@ const typeText = {
       return error.message
     }
   },
-  // Tool Definition
+
   tool: {
     type: 'function',
     function: {

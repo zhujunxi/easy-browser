@@ -1,13 +1,9 @@
-/**
- * Click Element Function and Tool Definition
- */
-import pageDataStore from './Store/index.js'
+import pageDataStore from '../store/page-data.js'
 
 const clickElement = {
   call: async ({ tagIndex }) => {
     try {
       const numericIndex = Number(tagIndex)
-
       const xpath = pageDataStore.getItem(numericIndex).xpath
 
       const tabs = await chrome.tabs.query({ active: true, currentWindow: true })
@@ -77,7 +73,7 @@ const clickElement = {
       return error.message
     }
   },
-  // Tool definition
+
   tool: {
     type: 'function',
     function: {

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { MESSAGE_TYPES } from '../services/ChatConstants'
 import ReactMarkdown from 'react-markdown'
 import 'github-markdown-css/github-markdown-light.css'
-import userConfirm from '@services/browser/userConfirm.js'
+import userConfirm from '@tools/utility/user-confirm.js'
 import { useI18n } from '@hooks/useI18n'
 
 /**

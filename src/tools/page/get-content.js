@@ -1,8 +1,5 @@
-/**
- * Get page content Function and Tool Definition
- */
+import scrollScreen from './scroll.js'
 
-import scrollScreen from '@services/browser/scrollScreen.js'
 const getScreenContent = {
   call: async ({ screenIndex = 1 }) => {
     try {
@@ -32,7 +29,7 @@ const getScreenContent = {
       return error.message
     }
   },
-  // Tool definition
+
   tool: {
     type: 'function',
     function: {

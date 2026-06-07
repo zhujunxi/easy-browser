@@ -8,16 +8,15 @@ import '@assets/styles/index.scss'
 import ConfigManager from '@config/index.js'
 
 import ChatHeader from './chat/components/ChatHeader.jsx'
-import Welcome from '@components/Welcome.jsx'
 import Chat from './chat/Chat.jsx'
 import NoApiKey from '@components/NoApikey.jsx'
 import TestPage from '../test/index.jsx'
+import { ChatProvider } from './chat/providers/ChatProvider.jsx'
 
 const SidePanelPage = () => {
   const port = useRef(null)
 
   const [hasApiKey, setHasApiKey] = useState(false)
-  const [messages, setMessages] = useState([])
   const [showTest, setShowTest] = useState(false)
 
   const { loadTheme } = useTheme()
@@ -33,7 +32,6 @@ const SidePanelPage = () => {
       setHasApiKey(false)
     }
   }
-  // Check language settings
   const checkLanguage = async () => {
     try {
       const config = await ConfigManager.get(['language'])
@@ -43,12 +41,10 @@ const SidePanelPage = () => {
       console.error('Failed to check language:', error)
     }
   }
-  // Check API key when component mounts and receives messages
   useEffect(() => {
     checkApiKey()
     loadTheme()
     checkLanguage()
-    // Listen for messages from options page
     const handleMessage = (message) => {
       if (message.type === 'settings_updated') {
         checkApiKey()
@@ -70,12 +66,17 @@ const SidePanelPage = () => {
   return (
     <div className='sidepanel'>
       <ChatHeader showTest={showTest} onToggleTest={() => setShowTest(!showTest)} />
-      {showTest ? (
+      {typeof __TEST_MODE__ !== 'undefined' && __TEST_MODE__ && showTest ? (
         <TestPage />
       ) : (
         <div className='chat'>
-          {messages.length === 0 && <Welcome />}
-          {hasApiKey ? <Chat onMessagesChange={setMessages} /> : <NoApiKey />}
+          {hasApiKey ? (
+            <ChatProvider>
+              <Chat />
+            </ChatProvider>
+          ) : (
+            <NoApiKey />
+          )}
         </div>
       )}
     </div>

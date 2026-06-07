@@ -1,30 +1,27 @@
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import loadingIcon from '@assets/icon/loading.svg'
 import ChatInput from './components/ChatInput.jsx'
 import { MessageRenderer } from './components/Message.jsx'
-import ChatService from './services/ChatService.js'
+import { useChat } from './providers/ChatProvider.jsx'
+import ChatOrchestrator from '@services/chat/orchestrator.js'
+import Welcome from '@components/Welcome.jsx'
 import '@assets/styles/components.scss'
 import './Chat.scss'
+
 /**
- * Chat Component - Main chat component
+ * Chat Component - Main chat interface
+ * Uses ChatProvider for state and ChatOrchestrator for logic
  */
-const Chat = ({ onMessagesChange }) => {
-  const [messages, setMessages] = useState([])
-  const [isRequesting, setIsRequesting] = useState(false)
-
+const Chat = () => {
+  const { messages, isRequesting, ...actions } = useChat()
   const chatContainerRef = useRef(null)
-
-  const chatServiceRef = useRef(null)
+  const orchestratorRef = useRef(null)
 
   useEffect(() => {
-    chatServiceRef.current = new ChatService(messages, setMessages, setIsRequesting)
+    orchestratorRef.current = new ChatOrchestrator(actions)
+    orchestratorRef.current.init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  useEffect(() => {
-    if (onMessagesChange) {
-      onMessagesChange(messages)
-    }
-  }, [messages, onMessagesChange])
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -32,36 +29,33 @@ const Chat = ({ onMessagesChange }) => {
     }
   }, [messages])
 
-  // Send user message
   const sendMessage = useCallback(async (inputText) => {
-    if (chatServiceRef.current) {
-      await chatServiceRef.current.sendMessage(inputText)
+    if (orchestratorRef.current) {
+      await orchestratorRef.current.sendMessage(inputText)
     }
   }, [])
 
-  // Cancel request
   const cancelRequest = useCallback(() => {
-    if (chatServiceRef.current) {
-      chatServiceRef.current.cancelRequest()
+    if (orchestratorRef.current) {
+      orchestratorRef.current.cancelRequest()
     }
   }, [])
 
-  // Reset chat
   const resetChat = useCallback(() => {
-    if (chatServiceRef.current) {
-      chatServiceRef.current.reset()
+    if (orchestratorRef.current) {
+      orchestratorRef.current.reset()
     }
   }, [])
 
   return (
     <div className='chat-container'>
-      {/* Message container */}
       <div className='message-container' id='chatContainer' ref={chatContainerRef}>
+        {messages.length === 0 && <Welcome />}
+
         {messages.map((message, index) => (
           <MessageRenderer key={`msg-${index}`} message={message} index={index} />
         ))}
 
-        {/* Loading indicator */}
         {isRequesting && (
           <div className='loading-container'>
             <img src={loadingIcon} alt='loading' className='loading-icon' />
@@ -69,7 +63,6 @@ const Chat = ({ onMessagesChange }) => {
         )}
       </div>
 
-      {/* Chat input */}
       <ChatInput
         onInputChange={sendMessage}
         messages={messages}

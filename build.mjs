@@ -26,16 +26,14 @@ const commonResolve = {
     '@services': resolve(__dirname, 'src/services'),
     '@config': resolve(__dirname, 'src/config'),
     '@hooks': resolve(__dirname, 'src/hooks'),
+    '@tools': resolve(__dirname, 'src/tools'),
   },
 };
 
 const commonCss = {
   preprocessorOptions: {
     scss: {
-      additionalData: `
-        @use "@assets/styles/variables" as *;
-        @use "@assets/styles/mixins" as *;
-      `,
+      // Variables and mixins must be explicitly @use'd in each file
     },
   },
 };
@@ -47,6 +45,9 @@ const otherBuildConfig = {
     react(),
     extensionPlugin(manifest),
   ],
+  define: {
+    __TEST_MODE__: !isProduction,
+  },
   build: {
     sourcemap: !isProduction,
     emptyOutDir: false,

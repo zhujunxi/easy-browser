@@ -1,7 +1,3 @@
-/**
- * Scroll Screen Function and Tool Definition
- */
-
 const scrollScreen = {
   call: async ({ screenIndex = 1 }) => {
     try {
@@ -14,37 +10,28 @@ const scrollScreen = {
         target: { tabId: tabs[0].id },
         function: (screenIndex) => {
           const viewportHeight = window.innerHeight
-
           const targetScrollTop = (screenIndex - 1) * viewportHeight
-
           const currentScrollTop = window.scrollY
-
           const tolerance = 10
           if (Math.abs(currentScrollTop - targetScrollTop) <= tolerance) {
             return { scrolled: false, message: `Already on screen 1, no need to scroll.` }
           }
-
-          window.scrollTo({
-            top: targetScrollTop,
-            behavior: 'smooth',
-          })
-
+          window.scrollTo({ top: targetScrollTop, behavior: 'smooth' })
           return { scrolled: true, message: `Already scroll on screen ${screenIndex}` }
         },
         args: [screenIndex],
       })
-      const scrollResult = result[0].result
 
+      const scrollResult = result[0].result
       if (scrollResult.scrolled) {
         await new Promise((resolve) => setTimeout(resolve, 1500))
       }
-
       return scrollResult.message
     } catch (error) {
       return error.message
     }
   },
-  // Tool definition
+
   tool: {
     type: 'function',
     function: {

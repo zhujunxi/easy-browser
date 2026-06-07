@@ -1,7 +1,3 @@
-/**
- * User Confirm Function and Tool Definition
- */
-
 let resolveCallback = null
 let rejectCallback = null
 
@@ -24,7 +20,7 @@ const userConfirm = {
       rejectCallback = null
     }
   },
-  // Tool Definition
+
   tool: {
     type: 'function',
     function: {
@@ -45,4 +41,5 @@ const userConfirm = {
     },
   },
 }
+
 export default userConfirm

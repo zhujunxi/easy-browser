@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Calls } from '@services/browser/index.js'
+import { Calls } from '@tools/index.js'
 
 const TestPage = () => {
   const [resulets, setResults] = useState([])

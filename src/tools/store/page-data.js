@@ -1,10 +1,10 @@
-class pageDataStore {
+class PageDataStore {
   constructor() {
-    if (!pageDataStore.instance) {
+    if (!PageDataStore.instance) {
       this._data = []
-      pageDataStore.instance = this
+      PageDataStore.instance = this
     }
-    return pageDataStore.instance
+    return PageDataStore.instance
   }
 
   setData(data) {
@@ -28,6 +28,6 @@ class pageDataStore {
   }
 }
 
-const instance = new pageDataStore()
+const pageDataStore = new PageDataStore()
 
-export default instance
+export default pageDataStore

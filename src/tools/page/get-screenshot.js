@@ -1,7 +1,3 @@
-/**
- * Get page screen shot Function and Tool Definition
- */
-
 const getScreenShot = {
   call: async () => {
     try {
@@ -21,13 +17,12 @@ const getScreenShot = {
         })
       }
       const result = await sendMessagePromise()
-
       return result
     } catch (error) {
       return error.message
     }
   },
-  // Tool definition
+
   tool: {
     type: 'function',
     function: {

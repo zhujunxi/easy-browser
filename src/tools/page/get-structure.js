@@ -1,10 +1,7 @@
-/**
- * Get page structure Function and Tool Definition
- */
-
-import pageDataStore from './Store/index.js'
+import pageDataStore from '../store/page-data.js'
 import arrayToHtmlString from '../../content/utils/arrayToHtmlString.js'
-import scrollScreen from '@services/browser/scrollScreen.js'
+import scrollScreen from './scroll.js'
+
 const getScreenStructure = {
   call: async ({ screenIndex = 1 }) => {
     try {
@@ -17,10 +14,7 @@ const getScreenStructure = {
         return new Promise((resolve, reject) => {
           chrome.tabs.sendMessage(
             tabs[0].id,
-            {
-              action: 'GET_SCREEN_STRUCTURE',
-              screenIndex,
-            },
+            { action: 'GET_SCREEN_STRUCTURE', screenIndex },
             (response) => {
               if (chrome.runtime.lastError) {
                 reject(new Error(chrome.runtime.lastError.message))
@@ -39,7 +33,7 @@ const getScreenStructure = {
       return error.message
     }
   },
-  // Tool definition// Tool definition
+
   tool: {
     type: 'function',
     function: {

@@ -14,6 +14,7 @@ export default [
       globals: {
         ...globals.browser,
         chrome: 'readonly',
+        __TEST_MODE__: 'readonly',
       },
       parserOptions: {
         ecmaVersion: 'latest',

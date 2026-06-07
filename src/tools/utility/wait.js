@@ -1,7 +1,3 @@
-/**
- * Wait Function and Tool Definition
- */
-
 const wait = {
   call: async ({ seconds = 30 }) => {
     try {
@@ -15,7 +11,7 @@ const wait = {
       return error.message
     }
   },
-  // 工具定义
+
   tool: {
     type: 'function',
     function: {
