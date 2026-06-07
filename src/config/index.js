@@ -30,27 +30,45 @@ class ConfigManager {
   static async get(keys) {
     try {
       return new Promise((resolve) => {
-        chrome.storage.local.get(keys, (result) => {
-          const finalResult = { ...result }
+        chrome.storage.local.get(keys, (localResult) => {
+          const finalResult = { ...localResult }
 
-          // Fill in default values
-          if (typeof keys === 'string') {
-            if (result[keys] === undefined && this.defaults[keys] !== undefined) {
-              finalResult[keys] = this.defaults[keys]
-            }
-          } else if (Array.isArray(keys)) {
-            keys.forEach((key) => {
-              if (finalResult[key] === undefined && this.defaults[key] !== undefined) {
-                finalResult[key] = this.defaults[key]
-              }
-            })
+          const getKeysArray = () => (typeof keys === 'string' ? [keys] : keys)
+          const hasLocalData = getKeysArray().some((k) => localResult[k] !== undefined)
+
+          if (hasLocalData) {
+            this._fillDefaults(keys, finalResult)
+            resolve(finalResult)
+            return
           }
 
-          resolve(finalResult)
+          chrome.storage.sync.get(keys, (syncResult) => {
+            const hasSyncData = getKeysArray().some((k) => syncResult[k] !== undefined)
+            if (hasSyncData) {
+              chrome.storage.local.set(syncResult)
+              Object.assign(finalResult, syncResult)
+            }
+            this._fillDefaults(keys, finalResult)
+            resolve(finalResult)
+          })
         })
       })
     } catch (error) {
       throw new Error(`Get Config Error: ${error.message}`)
+    }
+  }
+
+  static _fillDefaults(keys, result) {
+    if (typeof keys === 'string') {
+      if (result[keys] === undefined && this.defaults[keys] !== undefined) {
+        result[keys] = this.defaults[keys]
+      }
+    } else if (Array.isArray(keys)) {
+      keys.forEach((key) => {
+        if (result[key] === undefined && this.defaults[key] !== undefined) {
+          result[key] = this.defaults[key]
+        }
+      })
     }
   }
 

@@ -16,21 +16,20 @@ import TestPage from '../test/index.jsx'
 const SidePanelPage = () => {
   const port = useRef(null)
 
-  const [noApiKey, setNoApiKey] = useState(true)
+  const [hasApiKey, setHasApiKey] = useState(false)
   const [messages, setMessages] = useState([])
 
   const { loadTheme } = useTheme()
 
-  // Check if API key exists
   const checkApiKey = async () => {
     try {
       const config = await ConfigManager.get(['aiModel', 'openaiKey', 'qwenKey', 'deepseekKey'])
       const currentModel = config.aiModel || 'openai'
       const currentKey = config[`${currentModel}Key`]
-      setNoApiKey(!currentKey)
+      setHasApiKey(!!currentKey)
     } catch (error) {
       console.error('Failed to check API key:', error)
-      setNoApiKey(true)
+      setHasApiKey(false)
     }
   }
   // Check language settings
@@ -73,7 +72,7 @@ const SidePanelPage = () => {
       {/* <TestPage/> */}
       <div className='chat'>
         {messages.length === 0 && <Welcome />}
-        {noApiKey ? <Chat onMessagesChange={setMessages} /> : <NoApiKey />}
+        {hasApiKey ? <Chat onMessagesChange={setMessages} /> : <NoApiKey />}
       </div>
     </div>
   )
