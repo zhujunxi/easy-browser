@@ -1,7 +1,6 @@
 import scanPageEffect from './utils/scanPageEffect.js'
-import getInteractiveElements from './utils/getInteractiveElements.js'
-import getElementsDetail from './utils/getElementsDetail.js'
-import getVisibleTextInViewport from './utils/getVisibleTextInViewport.js'
+import getInteractiveElements, { getElementsDetail } from './utils/page-scanner.js'
+import getVisibleTextInViewport from './utils/text-extractor.js'
 import FloatButton from './components/FloatButton.js'
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {

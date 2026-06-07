@@ -1,8 +1,9 @@
 /**
- * check if element is hoverable
- * @param {HTMLElement} element
- * @returns {boolean}
+ * Page scanner - Detects and details interactive elements in the viewport
  */
+
+import getXPath from './getXPath.js'
+
 function detectHoverableElements(element) {
   if (!element) return false
 
@@ -49,7 +50,6 @@ function detectHoverableElements(element) {
     return false
   } finally {
     observer.disconnect()
-
     simulateMouseEvents(element, false)
 
     if (element.className !== originalClasses) {
@@ -65,11 +65,6 @@ function detectHoverableElements(element) {
   }
 }
 
-/**
- * simulate mouse events
- * @param {HTMLElement} element
- * @param {boolean} isOver
- */
 function simulateMouseEvents(element, isOver) {
   const rect = element.getBoundingClientRect()
   const centerX = rect.left + rect.width / 2
@@ -98,11 +93,6 @@ function simulateMouseEvents(element, isOver) {
   }
 }
 
-/**
- * check if element is in viewport
- * @param {HTMLElement} element
- * @returns {boolean}
- */
 function isElementInViewport(root, element) {
   const rect = element.getBoundingClientRect()
   const rootRect =
@@ -118,12 +108,6 @@ function isElementInViewport(root, element) {
   )
 }
 
-/**
- * check if element has interactive parent
- * @param {HTMLElement} element
- * @param {Set} interactiveElementsSet
- * @returns {boolean}
- */
 function hasInteractiveParent(element, interactiveElementsSet) {
   let parent = element.parentElement
   while (parent) {
@@ -135,11 +119,6 @@ function hasInteractiveParent(element, interactiveElementsSet) {
   return false
 }
 
-/**
- * check if element has ad related class
- * @param {HTMLElement} element
- * @returns {boolean}
- */
 function hasAdRelatedClass(element) {
   const classList = Array.from(element.classList)
   for (let i = 0; i < classList.length; i++) {
@@ -155,32 +134,31 @@ function hasAdRelatedClass(element) {
   return false
 }
 
-// Get interactive elements
 const getInteractiveElements = async (root = document) => {
   const interactiveSelectors = [
-    'a[href]', // Links with href attribute
-    'area[href]', // Image map areas
-    'button', // Buttons
-    'input', // Input fields
-    'select', // Dropdown select boxes
-    'textarea', // Multi-line text input
-    'iframe', // Inline frames
-    'audio[controls]', // Audio with controls
-    'video[controls]', // Video with controls
-    '[contenteditable]', // Editable content
-    '[tabindex]', // Elements with tabindex
-    '[role=button]', // ARIA button role
-    '[role=link]', // ARIA link role
-    '[role=checkbox]', // ARIA checkbox role
-    '[role=radio]', // ARIA radio button role
-    '[role=textbox]', // ARIA textbox role
-    '[role=combobox]', // ARIA combobox role
-    '[role=menuitem]', // ARIA menu item role
-    '[role=option]', // ARIA option role
-    '[role=tab]', // ARIA tab role
-    '[role=treeitem]', // ARIA tree item role
-    '[role=slider]', // ARIA slider role
-    '[role=spinbutton]', // ARIA spinbutton role
+    'a[href]',
+    'area[href]',
+    'button',
+    'input',
+    'select',
+    'textarea',
+    'iframe',
+    'audio[controls]',
+    'video[controls]',
+    '[contenteditable]',
+    '[tabindex]',
+    '[role=button]',
+    '[role=link]',
+    '[role=checkbox]',
+    '[role=radio]',
+    '[role=textbox]',
+    '[role=combobox]',
+    '[role=menuitem]',
+    '[role=option]',
+    '[role=tab]',
+    '[role=treeitem]',
+    '[role=slider]',
+    '[role=spinbutton]',
     'div',
     'li',
   ].join(',')
@@ -233,7 +211,6 @@ const getInteractiveElements = async (root = document) => {
         }
 
         if (hasTitle) return true
-
         return false
       }
 
@@ -258,4 +235,103 @@ const getInteractiveElements = async (root = document) => {
   return finalInteractiveElements
 }
 
+const getElementsDetail = (el) => {
+  const baseData = {
+    tag: el.tagName,
+    xpath: getXPath(el),
+  }
+
+  switch (el.tagName) {
+    case 'A': {
+      const linkText = el.innerText
+      return {
+        ...baseData,
+        ...(linkText && { text: el.innerText }),
+        ...(!linkText && { href: el.href.slice(0, 20) }),
+      }
+    }
+    case 'BUTTON': {
+      let buttonText = ''
+      const buttonAriaLabel = el.getAttribute('aria-label')
+      if (buttonAriaLabel) {
+        buttonText = buttonAriaLabel
+      } else if (el.innerText) {
+        buttonText = el.innerText.trim()
+      }
+      return {
+        ...baseData,
+        ...(buttonText && { text: buttonText }),
+        ...(!buttonText && { class: el.className.slice(0, 20) }),
+      }
+    }
+    case 'INPUT':
+      return {
+        ...baseData,
+        type: el.getAttribute('type') || null,
+        value: el.value.slice(0, 20),
+      }
+    case 'TEXTAREA':
+      return {
+        ...baseData,
+        value: el.value,
+        placeholder: el.placeholder.slice(0, 20),
+      }
+    case 'SELECT':
+      return {
+        ...baseData,
+        options: Array.from(el.options).map((opt) => ({
+          text: opt.text,
+          value: opt.value,
+          selected: opt.selected,
+        })),
+        selectedIndex: el.selectedIndex,
+        multiple: el.multiple,
+        selectType: 'select',
+      }
+    case 'IFRAME':
+      return {
+        ...baseData,
+        src: el.getAttribute('src') || null,
+        title: el.getAttribute('title') || null,
+        iframeType: 'iframe',
+      }
+    case 'AUDIO':
+    case 'VIDEO':
+      return {
+        ...baseData,
+        src: el.getAttribute('src') || null,
+        controls: el.controls,
+        autoplay: el.autoplay,
+        loop: el.loop,
+        muted: el.muted,
+        mediaType: el.tagName.toLowerCase(),
+      }
+    case 'DIV':
+    case 'H1':
+    case 'H2':
+    case 'H3':
+    case 'UL':
+    case 'OL':
+    case 'LI':
+      return {
+        ...baseData,
+        class: el.className.slice(0, 20),
+        text: el.innerText,
+      }
+    default: {
+      const role = el.getAttribute('role')
+      if (role) {
+        return {
+          ...baseData,
+          role: role,
+          ariaLabel: el.getAttribute('aria-label') || null,
+          ariaType: 'aria-' + role,
+        }
+      }
+      return baseData
+    }
+  }
+}
+
 export default getInteractiveElements
+export { getElementsDetail }

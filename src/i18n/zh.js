@@ -1,5 +1,3 @@
-import NoApiKey from '../../components/NoApikey'
-
 export default {
   common: {
     save: '保存设置',

@@ -2,16 +2,16 @@ import { StrictMode, useRef } from 'react'
 import { createRoot } from 'react-dom/client'
 import { useState, useEffect } from 'react'
 import { useTheme } from '@hooks/useTheme'
-import { i18n } from '@utils/i18n'
-import '@assets/styles/index.scss'
+import { i18n } from '@i18n/index'
+import '@styles/index.scss'
 
-import ConfigManager from '@config/index.js'
+import ConfigManager from '@services/storage.js'
 
 import ChatHeader from './chat/components/ChatHeader.jsx'
 import Chat from './chat/Chat.jsx'
-import NoApiKey from '@components/NoApikey.jsx'
+import NoApiKey from '@sidepanel/components/NoApiKey.jsx'
 import TestPage from '../test/index.jsx'
-import { ChatProvider } from './chat/providers/ChatProvider.jsx'
+import { ChatProvider } from './stores/ChatStore.jsx'
 
 const SidePanelPage = () => {
   const port = useRef(null)

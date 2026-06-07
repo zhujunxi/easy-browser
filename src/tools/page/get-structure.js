@@ -1,5 +1,5 @@
 import pageDataStore from '../store/page-data.js'
-import arrayToHtmlString from '../../content/utils/arrayToHtmlString.js'
+import { arrayToHtmlString } from '@/content/utils/text-extractor.js'
 import scrollScreen from './scroll.js'
 
 const getScreenStructure = {

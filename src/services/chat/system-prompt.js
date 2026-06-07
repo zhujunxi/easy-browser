@@ -3,7 +3,7 @@
  * Injects environment context into the base system prompt
  */
 
-import { BASE_SYSTEM_PROMPT } from '@/sidepanel/chat/services/ChatConstants.js'
+import { BASE_SYSTEM_PROMPT } from './constants.js'
 
 class SystemPromptBuilder {
   constructor() {

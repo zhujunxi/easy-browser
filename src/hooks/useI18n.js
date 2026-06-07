@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { i18n } from '@utils/i18n'
+import { i18n } from '@i18n/index'
 
 export function useI18n() {
   const [language, setLanguage] = useState(i18n.currentLanguage)

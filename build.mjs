@@ -21,12 +21,12 @@ const commonResolve = {
     '@': resolve(__dirname, 'src'),
     '@components': resolve(__dirname, 'src/components'),
     '@assets': resolve(__dirname, 'src/assets'),
-    '@utils': resolve(__dirname, 'src/utils'),
-    '@store': resolve(__dirname, 'src/store'),
     '@services': resolve(__dirname, 'src/services'),
-    '@config': resolve(__dirname, 'src/config'),
     '@hooks': resolve(__dirname, 'src/hooks'),
     '@tools': resolve(__dirname, 'src/tools'),
+    '@i18n': resolve(__dirname, 'src/i18n'),
+    '@styles': resolve(__dirname, 'src/styles'),
+    '@sidepanel': resolve(__dirname, 'src/sidepanel'),
   },
 };
 

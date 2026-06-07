@@ -5,7 +5,7 @@
 
 import { createContext, useContext, useReducer, useCallback, useRef } from 'react'
 import { v4 as uuidv4 } from 'uuid'
-import { MESSAGE_TYPES, MESSAGE_STATUS } from '../services/ChatConstants.js'
+import { MESSAGE_TYPES, MESSAGE_STATUS } from '@services/chat/constants.js'
 
 // Action types
 const ACTIONS = {

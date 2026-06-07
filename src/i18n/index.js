@@ -1,7 +1,7 @@
-import ConfigManager from '@config/index'
-import { LANGUAGES } from '@config/types'
-import en from '@config/locales/en'
-import zh from '@config/locales/zh'
+import ConfigManager from '@services/storage'
+import { LANGUAGES } from '@services/constants'
+import en from './en'
+import zh from './zh'
 
 const locales = {
   [LANGUAGES.ENGLISH]: en,

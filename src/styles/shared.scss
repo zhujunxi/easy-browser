@@ -1,6 +1,7 @@
-// variable
-$primary-color: #945cf9;
-$primary-hover: #8e57f5;
+@use './tokens' as *;
+@use './mixins' as *;
+
+// local overrides
 $secondary-color: #f5f5f5;
 $secondary-hover: #eeeeee;
 $text-color: #333;
@@ -12,7 +13,7 @@ $hover-background: #f5f5f5;
 $scrollbar-thumb: #bbbbbb;
 $scrollbar-thumb-hover: #949494;
 
-// mixin
+// local mixins
 @mixin flex-between {
   display: flex;
   align-items: center;

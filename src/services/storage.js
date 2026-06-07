@@ -1,5 +1,5 @@
 // ConfigManager.js - Configuration Manager
-import { MODEL_PROVIDERS, THEMES, LANGUAGES } from '@config/types'
+import { MODEL_PROVIDERS, THEMES, LANGUAGES } from './constants'
 /**
  * Configuration Manager
  * Handling extension configuration storage and retrieval

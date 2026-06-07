@@ -2,10 +2,10 @@ import { useEffect, useRef, useCallback } from 'react'
 import loadingIcon from '@assets/icon/loading.svg'
 import ChatInput from './components/ChatInput.jsx'
 import { MessageRenderer } from './components/Message.jsx'
-import { useChat } from './providers/ChatProvider.jsx'
+import { useChat } from '../stores/ChatStore.jsx'
 import ChatOrchestrator from '@services/chat/orchestrator.js'
-import Welcome from '@components/Welcome.jsx'
-import '@assets/styles/components.scss'
+import Welcome from '@sidepanel/components/Welcome.jsx'
+import '@styles/shared.scss'
 import './Chat.scss'
 
 /**

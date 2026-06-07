@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { MESSAGE_TYPES } from '../services/ChatConstants'
+import { MESSAGE_TYPES } from '@services/chat/constants.js'
 import ReactMarkdown from 'react-markdown'
 import 'github-markdown-css/github-markdown-light.css'
 import userConfirm from '@tools/utility/user-confirm.js'

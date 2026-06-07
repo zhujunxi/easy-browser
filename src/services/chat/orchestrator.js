@@ -9,11 +9,7 @@ import toolRegistry from '@tools/index.js'
 import ToolExecutor from '@tools/executor.js'
 import ContextManager from './context-manager.js'
 import SystemPromptBuilder from './system-prompt.js'
-import {
-  AI_REQUEST_OPTIONS,
-  MESSAGE_STATUS,
-  MAX_TOOL_ROUNDS,
-} from '@/sidepanel/chat/services/ChatConstants.js'
+import { AI_REQUEST_OPTIONS, MESSAGE_STATUS, MAX_TOOL_ROUNDS } from './constants.js'
 
 class ChatOrchestrator {
   constructor(chatActions) {

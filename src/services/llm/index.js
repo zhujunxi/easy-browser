@@ -1,4 +1,4 @@
-import ConfigManager from '@config/index.js'
+import ConfigManager from '@services/storage.js'
 
 const LlmService = {
   controller: new AbortController(),

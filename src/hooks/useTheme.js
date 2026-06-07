@@ -1,7 +1,7 @@
 // useTheme.js - Theme Management Hook
 import { useEffect } from 'react'
-import ConfigManager from '@config/index'
-import { THEMES } from '@config/types'
+import ConfigManager from '@services/storage'
+import { THEMES } from '@services/constants'
 
 /**
  * Theme Management Hook - Handles theme application and change monitoring
