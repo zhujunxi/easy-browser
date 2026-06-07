@@ -1,7 +1,7 @@
 const closeTabs = {
   call: async ({ tabIds }) => {
     try {
-      chrome.tabs.remove(tabIds)
+      await chrome.tabs.remove(tabIds)
       return `tab[${tabIds}] closed.`
     } catch (error) {
       throw new Error(`Failed to close tabs: ${error.message}`)

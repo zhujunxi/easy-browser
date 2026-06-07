@@ -200,7 +200,7 @@ const LlmService = {
             if (choice.finish_reason === 'tool_calls') {
               const finalToolCalls = Array.from(toolCallsCollection.values())
 
-              if (onCall && finalToolCalls.length > 0) onCall(finalToolCalls)
+              if (onCall && finalToolCalls.length > 0) await onCall(finalToolCalls)
               return { status: 'tool_calls' }
             }
             // Handle regular messages

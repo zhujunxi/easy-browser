@@ -66,7 +66,7 @@ export const ToolMessage = ({ tools }) => {
 
     switch (tool.call) {
       case 'userConfirm':
-        return <UserComfirmTool reason={tool.args.reason}></UserComfirmTool>
+        return <UserConfirmTool reason={tool.args.reason}></UserConfirmTool>
       case 'wait':
         return <WaitTool seconds={tool.args.seconds}></WaitTool>
       default:
@@ -99,7 +99,7 @@ export const ToolMessage = ({ tools }) => {
   )
 }
 
-const UserComfirmTool = ({ reason }) => {
+const UserConfirmTool = ({ reason }) => {
   const { t } = useI18n()
   const [isConfirm, SetIsConfirm] = useState(true)
   const handleConfirm = () => {

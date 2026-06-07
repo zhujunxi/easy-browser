@@ -14,7 +14,10 @@ const scrollScreen = {
           const currentScrollTop = window.scrollY
           const tolerance = 10
           if (Math.abs(currentScrollTop - targetScrollTop) <= tolerance) {
-            return { scrolled: false, message: `Already on screen 1, no need to scroll.` }
+            return {
+              scrolled: false,
+              message: `Already on screen ${screenIndex}, no need to scroll.`,
+            }
           }
           window.scrollTo({ top: targetScrollTop, behavior: 'smooth' })
           return { scrolled: true, message: `Already scroll on screen ${screenIndex}` }

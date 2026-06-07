@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Calls } from '@tools/index.js'
 
 const TestPage = () => {
-  const [resulets, setResults] = useState([])
+  const [results, setResults] = useState([])
   const [imgSrc, setImgSrc] = useState('')
   const [xpathValue, setXpathValue] = useState(1)
   const createTab = async ({ url = 'https://google.com' }) => {
@@ -68,7 +68,7 @@ const TestPage = () => {
   }
 
   const _wait = async () => {
-    const res = await Calls.delay({ seconds: 5 })
+    const res = await Calls.wait({ seconds: 5 })
     setResults(res)
   }
 
@@ -113,7 +113,7 @@ const TestPage = () => {
         <button onClick={scrollScreen}>scrollScreen</button>
         <button onClick={getScreenShot}>getScreenShot</button>
       </div>
-      <div>{JSON.stringify(resulets)}</div>
+      <div>{JSON.stringify(results)}</div>
       {imgSrc && <img src={imgSrc} style={{ width: '100%' }} alt='预览图片' />}
     </div>
   )
