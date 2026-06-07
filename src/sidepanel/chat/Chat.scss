@@ -40,6 +40,16 @@
     padding: $spacing-xs 6px;
     border-radius: $border-radius-sm;
   }
+
+  .test-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: $spacing-xs 6px;
+    font-size: 16px;
+  }
 }
 
 .chat {

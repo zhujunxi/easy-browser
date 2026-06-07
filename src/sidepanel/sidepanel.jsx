@@ -18,6 +18,7 @@ const SidePanelPage = () => {
 
   const [hasApiKey, setHasApiKey] = useState(false)
   const [messages, setMessages] = useState([])
+  const [showTest, setShowTest] = useState(false)
 
   const { loadTheme } = useTheme()
 
@@ -68,12 +69,15 @@ const SidePanelPage = () => {
 
   return (
     <div className='sidepanel'>
-      <ChatHeader />
-      {/* <TestPage/> */}
-      <div className='chat'>
-        {messages.length === 0 && <Welcome />}
-        {hasApiKey ? <Chat onMessagesChange={setMessages} /> : <NoApiKey />}
-      </div>
+      <ChatHeader showTest={showTest} onToggleTest={() => setShowTest(!showTest)} />
+      {showTest ? (
+        <TestPage />
+      ) : (
+        <div className='chat'>
+          {messages.length === 0 && <Welcome />}
+          {hasApiKey ? <Chat onMessagesChange={setMessages} /> : <NoApiKey />}
+        </div>
+      )}
     </div>
   )
 }
