@@ -139,7 +139,7 @@ html.dark {
   cursor: pointer;
   display: flex;
 
-  &.hover {
+  &:hover {
     background-color: #faf3fe;
     padding-right: 12px;
   }

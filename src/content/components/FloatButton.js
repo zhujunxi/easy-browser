@@ -1,12 +1,15 @@
 class FloatButton {
   constructor() {
     this.button = null
+    this.throttled = false
     this.init()
   }
 
   async init() {
     this.button = this._createButton()
-    this._bindEvents()
+    this._bindDelegatedEvents()
+    this._startHealthCheck()
+    this._listenForMessages()
 
     try {
       const result = await this._getStorageData('floatBtn')
@@ -32,24 +35,81 @@ class FloatButton {
     toggleButton.appendChild(icon)
     toggleButton.classList.add('easy-browser-float-btn')
 
-    document.body.appendChild(toggleButton)
+    if (document.body) {
+      document.body.appendChild(toggleButton)
+    }
     return toggleButton
   }
 
-  _bindEvents() {
-    this.button.addEventListener('click', () => {
-      chrome.runtime.sendMessage({
-        action: 'TOGGLE_SIDEPANEL',
-        fromUserGesture: true,
-      })
-    })
+  _ensureButton() {
+    if (!this.button || !this.button.isConnected) {
+      this.button = this._createButton()
+    }
+  }
 
-    this.button.addEventListener('mouseover', () => {
-      this.button.classList.add('hover')
-    })
+  _bindDelegatedEvents() {
+    document.addEventListener(
+      'click',
+      (e) => {
+        if (!e.target.closest('.easy-browser-float-btn')) return
+        e.stopPropagation()
+        if (this.throttled) return
+        this.throttled = true
+        this._clickFeedback()
+        setTimeout(() => {
+          this.throttled = false
+        }, 500)
+        this._sendToggleMessage()
+      },
+      { capture: true },
+    )
+  }
 
-    this.button.addEventListener('mouseout', () => {
-      this.button.classList.remove('hover')
+  _clickFeedback() {
+    const btn = this.button
+    if (!btn) return
+    btn.style.transition = 'none'
+    btn.style.backgroundColor = '#d0b0e0'
+    setTimeout(() => {
+      btn.style.transition = ''
+      btn.style.backgroundColor = ''
+    }, 200)
+  }
+
+  _startHealthCheck() {
+    setInterval(() => {
+      if (!this.button || !this.button.isConnected) {
+        this.button = this._createButton()
+      }
+    }, 2000)
+  }
+
+  async _sendToggleMessage(retries = 5) {
+    for (let i = 0; i < retries; i++) {
+      try {
+        await chrome.runtime.sendMessage({
+          action: 'TOGGLE_SIDEPANEL',
+          fromUserGesture: true,
+        })
+        return
+      } catch (e) {
+        console.warn(`FloatButton: sendMessage attempt ${i + 1}/${retries} failed:`, e.message)
+        if (i < retries - 1) {
+          await new Promise((r) => setTimeout(r, 500))
+        }
+      }
+    }
+  }
+
+  _listenForMessages() {
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message.type === 'floatBtnChanged') {
+        if (message.value === false) {
+          this.hide()
+        } else {
+          this.show()
+        }
+      }
     })
   }
 
@@ -78,14 +138,17 @@ class FloatButton {
   }
 
   show() {
+    this._ensureButton()
     this.button.style.display = 'flex'
   }
 
   hide() {
+    if (!this.button) return
     this.button.style.display = 'none'
   }
 
   toggle() {
+    this._ensureButton()
     if (this.button.style.display === 'none') {
       this.show()
     } else {
@@ -94,6 +157,7 @@ class FloatButton {
   }
 
   destroy() {
+    if (!this.button) return
     this.button.remove()
     this.button = null
   }

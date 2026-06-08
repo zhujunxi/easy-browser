@@ -1,4 +1,5 @@
 let isSidePanelOpen = false
+let toggling = false
 
 const openSidePanel = async (windowId) => {
   if (!chrome.sidePanel || !chrome.sidePanel.setOptions) {
@@ -18,14 +19,29 @@ const closeSidePanel = async () => {
 }
 
 export const toggleSidePanelHandler = async (sender, sendResponse) => {
+  if (toggling) {
+    sendResponse({ success: false, isOpen: isSidePanelOpen })
+    return
+  }
+  toggling = true
+
   const windowId = sender.tab?.windowId
 
-  if (isSidePanelOpen) {
-    await closeSidePanel()
-    sendResponse({ success: true, isOpen: false })
-  } else {
-    await openSidePanel(windowId)
-    sendResponse({ success: true, isOpen: true })
+  try {
+    if (isSidePanelOpen) {
+      await closeSidePanel()
+      isSidePanelOpen = false
+      sendResponse({ success: true, isOpen: false })
+    } else {
+      await openSidePanel(windowId)
+      isSidePanelOpen = true
+      sendResponse({ success: true, isOpen: true })
+    }
+  } catch (err) {
+    console.error('toggleSidePanel error:', err)
+    sendResponse({ success: false, isOpen: isSidePanelOpen })
+  } finally {
+    toggling = false
   }
 }
 

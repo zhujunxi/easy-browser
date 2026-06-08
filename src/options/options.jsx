@@ -14,6 +14,9 @@ import SelectBox from '@components/SelectBox'
 import ToggleSwitch from '@components/ToggleSwitch'
 import ModelCard from './ModelCard'
 
+// Inject floating button on the options page
+import '@/content/components/FloatButton'
+
 const OptionsPage = () => {
   const { notification, showNotification } = useNotification()
   const { setTheme } = useTheme()
@@ -73,16 +76,22 @@ const OptionsPage = () => {
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target
+    const newValue = type === 'checkbox' ? checked : value
     setSettings((prev) => ({
       ...prev,
-      [id]: type === 'checkbox' ? checked : value,
+      [id]: newValue,
     }))
+
+    if (id === 'floatBtn') {
+      ConfigManager.set({ floatBtn: newValue })
+      chrome.runtime.sendMessage({ type: 'settings_updated', floatBtn: newValue })
+    }
   }
 
   const handleSave = async () => {
     try {
       await ConfigManager.set(settings)
-      chrome.runtime.sendMessage({ type: 'settings_updated' })
+      chrome.runtime.sendMessage({ type: 'settings_updated', floatBtn: settings.floatBtn })
       showNotification(t('common.settingsSaved'), 'success')
     } catch (error) {
       showNotification(`${t('common.saveFailed')}: ${error.message}`, 'error')
