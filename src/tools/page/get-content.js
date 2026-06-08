@@ -34,8 +34,7 @@ const getScreenContent = {
     type: 'function',
     function: {
       name: 'getScreenContent',
-      description:
-        'Get the content of the current screen visible area, which is used to get the text content of the page.',
+      description: 'Get text content of current viewport',
       parameters: {
         type: 'object',
         properties: {

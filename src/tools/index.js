@@ -15,13 +15,12 @@ import updateTab from './tabs/update.js'
 import scrollScreen from './page/scroll.js'
 import getScreenStructure from './page/get-structure.js'
 import getScreenContent from './page/get-content.js'
-import getScreenShot from './page/get-screenshot.js'
+// import getScreenShot from './page/get-screenshot.js'  // hidden, re-enable when needed
 
 import clickElement from './interaction/click.js'
 import typeText from './interaction/type.js'
 import hoverElement from './interaction/hover.js'
 
-import wait from './utility/wait.js'
 import userConfirm from './utility/user-confirm.js'
 
 toolRegistry.register('createTab', createTab.call, createTab.tool, TOOL_CATEGORIES.NAVIGATION)
@@ -54,12 +53,7 @@ toolRegistry.register(
   getScreenContent.tool,
   TOOL_CATEGORIES.PAGE_QUERY,
 )
-toolRegistry.register(
-  'getScreenShot',
-  getScreenShot.call,
-  getScreenShot.tool,
-  TOOL_CATEGORIES.PAGE_QUERY,
-)
+// toolRegistry.register('getScreenShot', getScreenShot.call, getScreenShot.tool, TOOL_CATEGORIES.PAGE_QUERY)  // hidden
 
 toolRegistry.register(
   'clickElement',
@@ -75,7 +69,6 @@ toolRegistry.register(
   TOOL_CATEGORIES.PAGE_INTERACTION,
 )
 
-toolRegistry.register('wait', wait.call, wait.tool, TOOL_CATEGORIES.UTILITY)
 toolRegistry.register('userConfirm', userConfirm.call, userConfirm.tool, TOOL_CATEGORIES.UTILITY)
 
 export { toolRegistry, TOOL_CATEGORIES }

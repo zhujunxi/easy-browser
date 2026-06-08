@@ -24,6 +24,10 @@ const reloadTab = {
             type: 'number',
             description: 'Tab ID to reload',
           },
+          bypassCache: {
+            type: 'boolean',
+            description: 'Bypass browser cache. Default: false',
+          },
         },
         required: ['tabId'],
       },

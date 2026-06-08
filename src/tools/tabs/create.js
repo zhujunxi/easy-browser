@@ -39,7 +39,7 @@ const createTab = {
         properties: {
           url: {
             type: 'string',
-            description: 'URL of the webpage to open',
+            description: 'URL to open',
           },
         },
         required: ['url'],

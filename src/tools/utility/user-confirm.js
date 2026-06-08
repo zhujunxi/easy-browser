@@ -25,15 +25,13 @@ const userConfirm = {
     type: 'function',
     function: {
       name: 'userConfirm',
-      description:
-        'When users are required to perform certain operations (such as logging in, entering sensitive information, etc.), the process is paused and waits for user confirmation',
+      description: 'Pause and wait for user confirmation',
       parameters: {
         type: 'object',
         properties: {
           reason: {
             type: 'string',
-            description:
-              'The reason why user confirmation is required or a description of the action that needs to be performed',
+            description: 'Description of action requiring user confirmation',
           },
         },
         required: ['reason'],

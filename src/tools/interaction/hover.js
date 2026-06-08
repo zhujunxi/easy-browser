@@ -48,14 +48,13 @@ const hoverElement = {
     type: 'function',
     function: {
       name: 'hoverElement',
-      description: 'Hover the mouse over a specified element in the page screen',
+      description: 'Hover element by index',
       parameters: {
         type: 'object',
         properties: {
           tagIndex: {
             type: 'integer',
-            description:
-              'To hover the index of the element, need to get the element index from getScreenStructure',
+            description: 'Element index from getScreenStructure',
           },
         },
         required: ['tagIndex'],

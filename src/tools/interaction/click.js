@@ -78,14 +78,13 @@ const clickElement = {
     type: 'function',
     function: {
       name: 'clickElement',
-      description: 'Click the element by index in the page screen',
+      description: 'Click element by index',
       parameters: {
         type: 'object',
         properties: {
           tagIndex: {
             type: 'integer',
-            description:
-              'To click the index of the element, need to get the element index from getScreenStructure',
+            description: 'Element index from getScreenStructure',
           },
         },
         required: ['tagIndex'],

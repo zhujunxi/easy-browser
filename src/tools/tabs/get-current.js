@@ -15,7 +15,7 @@ const getCurrentTab = {
     type: 'function',
     function: {
       name: 'getCurrentTab',
-      description: 'Get current active tab information, including id and title',
+      description: 'Get current active tab info',
     },
   },
 }

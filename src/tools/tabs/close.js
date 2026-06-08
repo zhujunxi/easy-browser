@@ -18,7 +18,7 @@ const closeTabs = {
         properties: {
           tabIds: {
             oneOf: [{ type: 'number' }, { type: 'array', items: { type: 'number' } }],
-            description: 'Tab ID or array of tab IDs to close',
+            description: 'Tab ID(s) to close',
           },
         },
         required: ['tabIds'],

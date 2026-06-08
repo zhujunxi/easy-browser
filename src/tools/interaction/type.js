@@ -90,14 +90,13 @@ const typeText = {
     type: 'function',
     function: {
       name: 'typeText',
-      description: 'type text in input or textarea by index in the page screen',
+      description: 'Type text into element by index',
       parameters: {
         type: 'object',
         properties: {
           tagIndex: {
             type: 'integer',
-            description:
-              'Index of the input or textarea，need to get the element index from getScreenStructure',
+            description: 'Element index from getScreenStructure',
           },
           text: {
             type: 'string',

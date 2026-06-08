@@ -5,7 +5,7 @@
  */
 
 import LlmService from '@services/llm/index.js'
-import toolRegistry from '@tools/index.js'
+import toolRegistry, { TOOL_CATEGORIES } from '@tools/index.js'
 import ToolExecutor from '@tools/executor.js'
 import ContextManager from './context-manager.js'
 import SystemPromptBuilder from './system-prompt.js'
@@ -66,26 +66,25 @@ class ChatOrchestrator {
 
   /**
    * Main agent loop: LLM → tool calls → LLM → ...
+   * Uses adaptive categories: starts from inferred + UTILITY,
+   * expands with categories of tools actually called in each round.
    * @param {string[]} initialCategories - Tool categories for the first round
    */
   async _agentLoop(initialCategories) {
-    let categories = initialCategories
+    const categories = new Set(initialCategories)
 
     for (let round = 0; round < MAX_TOOL_ROUNDS; round++) {
       const messages = this.contextManager.getContext()
-
-      // Get tools filtered by category for first round, all tools for subsequent rounds
-      const tools = round === 0 ? toolRegistry.getTools(categories) : toolRegistry.getTools()
+      const tools = toolRegistry.getTools(Array.from(categories))
 
       const response = await LlmService.fetchStream(
         messages,
         { ...AI_REQUEST_OPTIONS, tools },
         this._handleStreamChunk.bind(this),
-        this._handleToolCalls.bind(this),
+        (toolCalls) => this._handleToolCalls(toolCalls, categories),
       )
 
       if (response.status === 'success') {
-        // Final text response
         this.contextManager.addMessage({
           role: 'assistant',
           content: this.currentContent,
@@ -101,12 +100,8 @@ class ChatOrchestrator {
         this.actions.addAssistantMessage(response.data, MESSAGE_STATUS.ERROR)
         return
       }
-
-      // response.status === 'tool_calls' - loop continues
-      categories = undefined
     }
 
-    // Max rounds exceeded
     this.actions.addAssistantMessage(
       'Task stopped: maximum tool execution rounds reached. Please try a simpler task.',
       MESSAGE_STATUS.ERROR,
@@ -133,29 +128,34 @@ class ChatOrchestrator {
 
   /**
    * Handle tool calls from LLM
+   * Collects categories of called tools for adaptive category tracking
+   * @param {Object[]} toolCalls
+   * @param {Set<string>} [categories] - Adaptive categories set to expand
    */
-  async _handleToolCalls(toolCalls) {
-    // Finalize the current assistant message
+  async _handleToolCalls(toolCalls, categories) {
     if (this.currentAssistantId) {
       this.actions.updateMessageStatus(this.currentAssistantId, MESSAGE_STATUS.SUCCESS)
       this.currentAssistantId = null
     }
 
-    // Add assistant message with tool calls to context
     this.contextManager.addMessage({
       role: 'assistant',
       content: this.currentContent,
       tool_calls: toolCalls,
     })
 
-    // Create tool message in UI
     this.currentToolMessageId = this.actions.addToolMessage()
 
-    // Execute each tool call
     for (const toolCall of toolCalls) {
       try {
         const args = JSON.parse(toolCall.function.arguments)
         const name = toolCall.function.name
+
+        // Track tool category for adaptive filtering
+        if (categories) {
+          const cat = toolRegistry.getToolCategory(name)
+          if (cat) categories.add(cat)
+        }
 
         const callFn = toolRegistry.getCall(name)
         if (!callFn) {
@@ -181,7 +181,6 @@ class ChatOrchestrator {
           MESSAGE_STATUS.SUCCESS,
         )
 
-        // Truncate tool result before adding to context
         const truncated = this.contextManager.truncateToolResult(result)
 
         this.contextManager.addMessage({

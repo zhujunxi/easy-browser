@@ -27,8 +27,7 @@ const getScreenShot = {
     type: 'function',
     function: {
       name: 'getScreenShot',
-      description:
-        'Get a screenshot of the current screen visible area to identify complex page structures',
+      description: 'Get screenshot of current viewport for visual analysis',
       parameters: {
         type: 'object',
         properties: {},

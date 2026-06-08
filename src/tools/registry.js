@@ -75,6 +75,15 @@ class ToolRegistry {
   }
 
   /**
+   * Get the category of a registered tool
+   * @param {string} name
+   * @returns {string|null}
+   */
+  getToolCategory(name) {
+    return this._categories.get(name) || null
+  }
+
+  /**
    * Get all Calls map (backward compatible)
    * @returns {Object}
    */

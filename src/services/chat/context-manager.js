@@ -5,13 +5,10 @@
 
 // Rough token estimation: ~3.5 chars per token for mixed content
 const CHARS_PER_TOKEN = 3.5
-const MAX_CONTEXT_TOKENS = 64000
 const MAX_TOOL_RESULT_TOKENS = 3000
-const SUMMARY_THRESHOLD_TOKENS = Math.floor(MAX_CONTEXT_TOKENS * 0.75)
 
 class ContextManager {
   constructor(options = {}) {
-    this.maxContextTokens = options.maxContextTokens || MAX_CONTEXT_TOKENS
     this.maxToolResultTokens = options.maxToolResultTokens || MAX_TOOL_RESULT_TOKENS
     this.messages = []
   }
@@ -89,11 +86,14 @@ class ContextManager {
 
   /**
    * Add a message to the context
+   * Keeps only the last 2 complete conversation rounds (user → final response)
    * @param {Object} message
    */
   addMessage(message) {
     this.messages.push(message)
-    this._maybeCompress()
+    if (message.role === 'user') {
+      this._keepLastTwoRounds()
+    }
   }
 
   /**
@@ -105,44 +105,27 @@ class ContextManager {
   }
 
   /**
-   * Check if context is approaching limits
-   * @returns {boolean}
-   */
-  isNearLimit() {
-    return this.getTotalTokens() >= SUMMARY_THRESHOLD_TOKENS
-  }
-
-  /**
-   * Check if context has exceeded the hard limit
-   * @returns {boolean}
-   */
-  isOverLimit() {
-    return this.getTotalTokens() >= this.maxContextTokens
-  }
-
-  /**
-   * Compress older messages when context is too large
-   * Uses a simple rolling window: keep system prompt + last N messages
+   * Keep only the last 2 complete conversation rounds.
+   * A round = user message → ... → final assistant response.
+   * Triggered when a new user message is added and there are > 2 rounds.
    * @private
    */
-  _maybeCompress() {
-    if (!this.isNearLimit()) return
-
+  _keepLastTwoRounds() {
     const systemMessage = this.messages[0]?.role === 'system' ? [this.messages[0]] : []
 
-    // Keep last 20 messages, drop older ones
-    const recentMessages = this.messages.slice(-20)
+    const userIndices = []
+    for (let i = 0; i < this.messages.length; i++) {
+      if (this.messages[i].role === 'user') {
+        userIndices.push(i)
+      }
+    }
 
-    // If still over limit after keeping 20, drop to 10
-    if (
-      this.estimateMessagesTokens([...systemMessage, ...recentMessages]) >= this.maxContextTokens
-    ) {
-      const minimal = this.messages.slice(-10)
-      this.messages = [...systemMessage, ...minimal]
-      console.warn('Context compressed: kept last 10 messages')
-    } else {
-      this.messages = [...systemMessage, ...recentMessages]
-      console.warn('Context compressed: kept last 20 messages')
+    if (userIndices.length > 2) {
+      const keepFrom = userIndices[userIndices.length - 2]
+      this.messages = [...systemMessage, ...this.messages.slice(keepFrom)]
+      console.warn(
+        `Context compressed: kept last 2 rounds (dropped ${userIndices.length - 2} round(s))`,
+      )
     }
   }
 

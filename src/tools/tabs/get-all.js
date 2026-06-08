@@ -12,7 +12,7 @@ const getAllTabs = {
     type: 'function',
     function: {
       name: 'getAllTabs',
-      description: 'Get all tabs information, including id and title',
+      description: 'Get all tabs info',
     },
   },
 }

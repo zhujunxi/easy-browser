@@ -39,7 +39,7 @@ const getScreenStructure = {
     function: {
       name: 'getScreenStructure',
       description:
-        'Gets the interactive elements in the current screen visible area, which is used to identify page tags for input, click and other interactions. Does not include page content',
+        'Get interactive elements in current viewport (for click/input targeting, no page content)',
       parameters: {
         type: 'object',
         properties: {

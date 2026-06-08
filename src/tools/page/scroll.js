@@ -45,8 +45,7 @@ const scrollScreen = {
         properties: {
           screenIndex: {
             type: 'integer',
-            description:
-              'Scroll screen page number, the height of each page is equal to the viewport height. The default is 1',
+            description: 'Page to scroll to (1 viewport height per page). Default: 1',
           },
         },
         required: ['screenIndex'],
