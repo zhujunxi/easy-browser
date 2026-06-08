@@ -2,6 +2,7 @@ import { build } from 'vite';
 import { resolve } from 'path';
 import { rm } from 'fs/promises';
 import { fileURLToPath } from 'url';
+import { spawn } from 'child_process';
 import archiver from 'archiver';
 import fs from 'fs';
 
@@ -113,9 +114,25 @@ async function createZip() {
   });
 }
 
+// --- Log server (dev mode only) ---
+let logServerProcess = null
+
+function startLogServer() {
+  if (isProduction) return
+  const serverPath = resolve(__dirname, 'scripts/log-server.mjs')
+  if (!fs.existsSync(serverPath)) return
+  logServerProcess = spawn('node', [serverPath], { stdio: 'inherit' })
+  logServerProcess.on('error', () => { logServerProcess = null })
+  process.on('exit', () => { if (logServerProcess) logServerProcess.kill() })
+  process.on('SIGINT', () => { if (logServerProcess) logServerProcess.kill(); process.exit() })
+  process.on('SIGTERM', () => { if (logServerProcess) logServerProcess.kill(); process.exit() })
+}
+
 // --- Build ---
 async function runBuilds() {
   try {
+    startLogServer()
+
     console.log(`🧹 Cleaning output directory: ${distPath}...`);
     await rm(distPath, { recursive: true, force: true });
     console.log('✅ Output directory cleaned.');

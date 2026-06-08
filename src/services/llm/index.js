@@ -1,18 +1,15 @@
 import ConfigManager from '@services/storage.js'
+import RequestLogger from './request-logger.js'
 
 const LlmService = {
   controller: new AbortController(),
 
   async abortFetch() {
-    this.controller.abort() // Cancel all requests
-    this.controller = new AbortController() // Create a new controller to prevent subsequent requests from being unusable
+    this.controller.abort()
+    this.controller = new AbortController()
     return { status: 'Canceled' }
   },
 
-  /**
-   * Get API configuration
-   * @private
-   */
   async _getApiConfig() {
     const models = await ConfigManager.get('aiModel')
     const model = models.aiModel
@@ -40,22 +37,13 @@ const LlmService = {
     return { model, apiKey, apiModel, endpoint }
   },
 
-  /**
-   * Stream API call
-   * @param {Array} messages - Message array
-   * @param {Object} options - Request options
-   * @param {Function} onStreamChunk - Callback for handling streaming content
-   * @param {Function} onCall - Callback for handling tool calls
-   * @returns {Promise<Object>} - Returns request status
-   */
   async fetchStream(messages, options, onStreamChunk, onCall) {
     try {
-      const { apiKey, apiModel, endpoint } = await this._getApiConfig()
-
-      // Pass global signal
+      const { model: provider, apiKey, apiModel, endpoint } = await this._getApiConfig()
       const signal = this.controller.signal
+      const startTime = Date.now()
 
-      return await this._processStreamResponse(
+      const result = await this._processStreamResponse(
         messages,
         endpoint,
         apiKey,
@@ -65,34 +53,78 @@ const LlmService = {
         onStreamChunk,
         onCall,
       )
+
+      if (result._log) {
+        const requestBody = { messages, model: apiModel, stream: true, ...options }
+        await RequestLogger.log({
+          timestamp: new Date().toISOString(),
+          apiName: `ai.${provider}`,
+          method: 'POST',
+          url: endpoint,
+          request: {
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              'content-type': 'application/json',
+            },
+            body: requestBody,
+          },
+          response: {
+            status: 200,
+            body: result._log,
+          },
+          durationMs: Date.now() - startTime,
+        })
+      }
+
+      return result
     } catch (error) {
       return { status: 'error', message: error.message }
     }
   },
 
-  /**
-   * Non-streaming API call
-   * @param {Array} messages - Message array
-   * @param {Object} options - Request options
-   * @returns {Promise<Object>} - Returns complete response
-   */
   async fetch(messages, options = {}) {
     try {
-      const { apiKey, apiModel, endpoint } = await this._getApiConfig()
-
-      // Pass global signal
+      const { model: provider, apiKey, apiModel, endpoint } = await this._getApiConfig()
       const signal = this.controller.signal
+      const startTime = Date.now()
 
-      return await this._processResponse(messages, endpoint, apiKey, apiModel, options, signal)
+      const result = await this._processResponse(
+        messages,
+        endpoint,
+        apiKey,
+        apiModel,
+        options,
+        signal,
+      )
+
+      if (result._log) {
+        const requestBody = { messages, model: apiModel, stream: false, ...options }
+        await RequestLogger.log({
+          timestamp: new Date().toISOString(),
+          apiName: `ai.${provider}`,
+          method: 'POST',
+          url: endpoint,
+          request: {
+            headers: {
+              Authorization: `Bearer ${apiKey}`,
+              'content-type': 'application/json',
+            },
+            body: requestBody,
+          },
+          response: {
+            status: 200,
+            body: result._log,
+          },
+          durationMs: Date.now() - startTime,
+        })
+      }
+
+      return result
     } catch (error) {
       return { status: 'error', message: error.message }
     }
   },
 
-  /**
-   * Process streaming response
-   * @private
-   */
   async _processStreamResponse(
     messages,
     apiHost,
@@ -113,7 +145,7 @@ const LlmService = {
         body: JSON.stringify({
           messages: messages,
           model: model,
-          stream: true, // Ensure streaming output is enabled
+          stream: true,
           ...options,
         }),
         signal,
@@ -126,13 +158,15 @@ const LlmService = {
 
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
-
-      // For collecting partial tool_calls
       const toolCallsCollection = new Map()
+
+      let responseId = ''
+      let responseCreated = 0
+      let responseModel = ''
+      let fullContent = ''
 
       while (true) {
         const { done, value } = await reader.read()
-
         if (done) break
 
         const chunk = decoder.decode(value)
@@ -142,20 +176,40 @@ const LlmService = {
           if (!line.startsWith('data: ')) continue
           const data = line.slice(6)
 
-          if (data === '[DONE]') return { status: 'success' }
+          if (data === '[DONE]') {
+            const responseBody = {
+              id: responseId || undefined,
+              object: 'chat.completion',
+              created: responseCreated || undefined,
+              model: responseModel || undefined,
+              choices: [
+                {
+                  index: 0,
+                  message: {
+                    role: 'assistant',
+                    content: fullContent || null,
+                  },
+                  logprobs: null,
+                  finish_reason: 'stop',
+                },
+              ],
+            }
+            return { status: 'success', _log: responseBody }
+          }
 
           try {
             const parsed = JSON.parse(data)
+            if (parsed.id) responseId = parsed.id
+            if (parsed.created) responseCreated = parsed.created
+            if (parsed.model) responseModel = parsed.model
+
             const choice = parsed.choices[0]
             const delta = choice.delta
 
-            // Handle tool calls
             if (delta && delta.tool_calls) {
               for (const toolCall of delta.tool_calls) {
                 const index = toolCall.index
-
                 if (!toolCallsCollection.has(index)) {
-                  // First time receiving tool_call with this index
                   toolCallsCollection.set(index, {
                     id: toolCall.id || '',
                     type: toolCall.type || 'function',
@@ -165,26 +219,17 @@ const LlmService = {
                     },
                   })
                 } else {
-                  // Subsequent parts received
                   const current = toolCallsCollection.get(index)
-
-                  // Update ID (if any)
                   if (toolCall.id && toolCall.id !== '') {
                     current.id = toolCall.id
                   }
-
-                  // Update type (if any)
                   if (toolCall.type) {
                     current.type = toolCall.type
                   }
-
-                  // Update function.name (if any)
                   if (toolCall.function && toolCall.function.name) {
                     current.function.name = current.function.name || ''
                     current.function.name += toolCall.function.name
                   }
-
-                  // Update function.arguments (if any)
                   if (
                     toolCall.function &&
                     toolCall.function.arguments !== null &&
@@ -196,15 +241,32 @@ const LlmService = {
                 }
               }
             }
-            // Check if tool call is completed
+
             if (choice.finish_reason === 'tool_calls') {
               const finalToolCalls = Array.from(toolCallsCollection.values())
-
               if (onCall && finalToolCalls.length > 0) await onCall(finalToolCalls)
-              return { status: 'tool_calls' }
-            }
-            // Handle regular messages
-            else if (delta && delta.content && delta.content !== 'tools') {
+
+              const responseBody = {
+                id: responseId || undefined,
+                object: 'chat.completion',
+                created: responseCreated || undefined,
+                model: responseModel || undefined,
+                choices: [
+                  {
+                    index: 0,
+                    message: {
+                      role: 'assistant',
+                      content: fullContent || null,
+                      tool_calls: finalToolCalls,
+                    },
+                    logprobs: null,
+                    finish_reason: 'tool_calls',
+                  },
+                ],
+              }
+              return { status: 'tool_calls', _log: responseBody }
+            } else if (delta && delta.content && delta.content !== 'tools') {
+              fullContent += delta.content
               onStreamChunk && onStreamChunk(delta.content)
             }
           } catch (e) {
@@ -219,10 +281,6 @@ const LlmService = {
     }
   },
 
-  /**
-   * Process non-streaming response
-   * @private
-   */
   async _processResponse(messages, apiHost, apiKey, model, options, signal) {
     try {
       const response = await fetch(apiHost, {
@@ -234,7 +292,7 @@ const LlmService = {
         body: JSON.stringify({
           messages: messages,
           model: model,
-          stream: false, // Ensure streaming output is disabled
+          stream: false,
           ...options,
         }),
         signal,
@@ -247,7 +305,6 @@ const LlmService = {
 
       const result = await response.json()
 
-      // Handle tool call response
       if (
         result.choices &&
         result.choices[0] &&
@@ -258,10 +315,10 @@ const LlmService = {
         return {
           status: 'tool_calls',
           data: result.choices[0].message.tool_calls,
+          _log: result,
         }
       }
 
-      // Handle regular response
       if (
         result.choices &&
         result.choices[0] &&
@@ -271,12 +328,14 @@ const LlmService = {
         return {
           status: 'success',
           data: result.choices[0].message.content,
+          _log: result,
         }
       }
 
       return {
         status: 'success',
         data: result,
+        _log: result,
       }
     } catch (error) {
       return { status: 'error', message: error.message }
