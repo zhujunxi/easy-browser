@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { MESSAGE_TYPES } from '@services/chat/constants.js'
 import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import 'github-markdown-css/github-markdown-light.css'
 import userConfirm from '@tools/utility/user-confirm.js'
 import { useI18n } from '@hooks/useI18n'
@@ -25,21 +26,31 @@ export const MessageRenderer = ({ message, index }) => {
   }
 }
 
+function stabilizeMarkdown(content) {
+  if (!content) return content
+  const lines = content.split('\n')
+  const lastLine = lines[lines.length - 1]
+  const trimmed = lastLine.trimEnd()
+  if (trimmed.startsWith('|') && !trimmed.endsWith('|')) {
+    lines[lines.length - 1] = lastLine + ' |'
+    return lines.join('\n')
+  }
+  return content
+}
+
 const AssistantMessage = ({ message }) => {
-  return message.status === 'success' ? (
-    <div className='message assistant-message markdown-body'>
-      <ReactMarkdown>{message.content}</ReactMarkdown>
-    </div>
-  ) : (
-    <div className='message assistant-message assistant-message-error'>
-      <div className={`tool-status ${message.status}`}>
-        <div className='status-background'>
-          <div className='status-inner'>
-            <div className='status-checkmark'></div>
-          </div>
-        </div>
+  if (message.status === 'error') {
+    return (
+      <div className='message assistant-message assistant-message-error'>
+        <div className='tool-content'>{message.content}</div>
       </div>
-      <div className='tool-content'>{message.content}</div>
+    )
+  }
+  return (
+    <div className='message assistant-message markdown-body'>
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>
+        {stabilizeMarkdown(message.content)}
+      </ReactMarkdown>
     </div>
   )
 }
