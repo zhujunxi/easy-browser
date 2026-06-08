@@ -1,7 +1,8 @@
-// ModelCard Component
-const ModelCard = ({ id, active, settings, onChange, fields }) => {
+const ModelCard = ({ active, settings, onChange, fields }) => {
+  if (!active) return null
+
   return (
-    <div className={`model-card ${active ? 'active' : ''}`} id={`${id}-card`}>
+    <div className='model-fields'>
       {fields.map((field) => (
         <div className='form-group' key={field.id}>
           <label htmlFor={field.id}>{field.label}</label>

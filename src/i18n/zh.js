@@ -9,6 +9,8 @@ export default {
     settings: '设置',
   },
   settings: {
+    general: '通用',
+    generalDesc: '外观与界面偏好设置',
     theme: '主题',
     language: '语言',
     floatButton: '悬浮按钮',
@@ -20,6 +22,7 @@ export default {
   },
   ai: {
     model: 'AI模型',
+    modelDesc: '配置AI服务商和密钥信息',
     serviceProvider: '服务提供商',
     modelName: '模型',
     apiHost: 'API地址',

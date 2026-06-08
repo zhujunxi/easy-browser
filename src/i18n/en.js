@@ -9,6 +9,8 @@ export default {
     settings: 'Settings',
   },
   settings: {
+    general: 'General',
+    generalDesc: 'Appearance and interface preferences',
     theme: 'Theme',
     language: 'Language',
     floatButton: 'Floating Button',
@@ -20,6 +22,7 @@ export default {
   },
   ai: {
     model: 'AI Model',
+    modelDesc: 'Configure your AI service provider and credentials',
     serviceProvider: 'Service Provider',
     modelName: 'Model',
     apiHost: 'API Host',
